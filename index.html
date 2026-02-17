@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<style>
+body{
+  margin:0;
+  background:#000;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  min-height:100vh;
+  font-family:Arial,sans-serif;
+}
+
+/* container */
+.spin-box{
+  position:relative;
+  max-width:360px;
+  width:100%;
+  border-radius:22px;
+  overflow:hidden;
+  box-shadow:0 20px 60px rgba(0,0,0,.7);
+}
+
+/* image */
+.spin-box img{
+  width:100%;
+  display:block;
+}
+
+/* ✅ caption title: ONE LINE + glow + fade-in */
+.spin-title{
+  position:absolute;
+  top:16px;
+  left:50%;
+  transform:translateX(-50%);
+  color:#fff;
+  font-weight:900;
+  font-size:20px;
+  white-space:nowrap;
+  text-align:center;
+  letter-spacing:.4px;
+
+  /* fade-in */
+  opacity:0;
+  animation: titleIn .55s ease forwards;
+
+  /* glow pulse */
+  text-shadow:
+    0 4px 14px rgba(0,0,0,.95),
+    0 0 10px rgba(255,255,255,.25),
+    0 0 18px rgba(255,255,255,.18);
+}
+@keyframes titleIn{
+  from{opacity:0; transform:translateX(-50%) translateY(-6px) scale(.98);}
+  to  {opacity:1; transform:translateX(-50%) translateY(0) scale(1);}
+}
+@keyframes glowPulse{
+  0%{text-shadow:0 4px 14px rgba(0,0,0,.95),0 0 8px rgba(255,255,255,.18),0 0 14px rgba(255,255,255,.12);}
+  50%{text-shadow:0 4px 14px rgba(0,0,0,.95),0 0 14px rgba(255,255,255,.32),0 0 24px rgba(255,255,255,.22);}
+  100%{text-shadow:0 4px 14px rgba(0,0,0,.95),0 0 8px rgba(255,255,255,.18),0 0 14px rgba(255,255,255,.12);}
+}
+.spin-title{
+  animation: titleIn .55s ease forwards, glowPulse 2.8s ease-in-out infinite;
+}
+
+/* SPIN button */
+.spin-btn{
+  position:absolute;
+  bottom:22px;
+  left:50%;
+  transform:translateX(-50%);
+  background:#fff;
+  color:#111;
+  font-weight:900;
+  border:none;
+  border-radius:14px;
+  padding:14px 44px;
+  font-size:18px;
+  cursor:pointer;
+  box-shadow:0 12px 30px rgba(0,0,0,.5);
+  transition: transform .18s ease;
+}
+.spin-btn:hover{
+  transform:translateX(-50%) scale(1.05);
+}
+
+/* close button */
+.close-btn{
+  position:absolute;
+  top:10px;
+  right:10px;
+  width:36px;
+  height:36px;
+  border-radius:50%;
+  background:rgba(0,0,0,.6);
+  color:#fff;
+  border:none;
+  font-size:20px;
+  cursor:pointer;
+}
+.close-btn:hover{ background:#000; }
+
+/* small screens: shrink title a bit but keep single line */
+@media(max-width:360px){
+  .spin-title{font-size:18px}
+}
+</style>
+
+</head>
+
+<body>
+
+<div class="spin-box" id="spinBox">
+
+  <!-- CHANGE IMAGE HERE -->
+  <img src="your-image.jpg" alt="Tattoo Of The Day">
+
+  <!-- TITLE (one-line caption) -->
+  <div class="spin-title">🔥 Tattoo Of The Day</div>
+
+  <!-- CLOSE -->
+  <button class="close-btn"
+    onclick="document.getElementById('spinBox').style.display='none'">✕</button>
+
+  <!-- SPIN -->
+  <button class="spin-btn"
+    onclick="window.location.href='https://johnsimsek.github.io/Spin-/'">
+    SPIN
+  </button>
+
+</div>
+
+</body>
+</html>
