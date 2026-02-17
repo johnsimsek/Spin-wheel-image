@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<style>
+body{
+  margin:0;
+  background:#fff;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  min-height:100vh;
+  font-family:Arial,sans-serif;
+}
+
+/* ===== container (premium card) ===== */
+.spin-box{
+  position:relative;
+  max-width:360px;
+  width:100%;
+  border-radius:22px;
+  overflow:hidden;
+  box-shadow:
+    0 20px 60px rgba(0,0,0,.22),
+    0 8px 22px rgba(0,0,0,.10);
+}
+
+/* ✅ soft blur glow under card */
+.spin-box::after{
+  content:"";
+  position:absolute;
+  left:50%;
+  bottom:-18px;
+  transform:translateX(-50%);
+  width:86%;
+  height:34px;
+  background:rgba(0,0,0,.18);
+  filter: blur(18px);
+  opacity:.22;
+  pointer-events:none;
+  z-index:-1;
+}
+
+/* image */
+.spin-box img{
+  width:100%;
+  display:block;
+}
+
+/* ===== title: one-line caption + glow + fade-in ===== */
+.spin-title{
+  position:absolute;
+  top:16px;
+  left:50%;
+  transform:translateX(-50%);
+  color:#fff;
+  font-weight:900;
+  font-size:20px;
+  white-space:nowrap;
+  text-align:center;
+  letter-spacing:.4px;
+
+  opacity:0;
+  animation: titleIn .55s ease forwards, glowPulse 2.8s ease-in-out infinite;
+
+  text-shadow:
+    0 4px 14px rgba(0,0,0,.95),
+    0 0 10px rgba(255,255,255,.25),
+    0 0 18px rgba(255,255,255,.18);
+}
+
+@keyframes titleIn{
+  from{opacity:0; transform:translateX(-50%) translateY(-6px) scale(.98);}
+  to  {opacity:1; transform:translateX(-50%) translateY(0) scale(1);}
+}
+@keyframes glowPulse{
+  0%{text-shadow:0 4px 14px rgba(0,0,0,.95),0 0 8px rgba(255,255,255,.18),0 0 14px rgba(255,255,255,.12);}
+  50%{text-shadow:0 4px 14px rgba(0,0,0,.95),0 0 16px rgba(255,255,255,.35),0 0 26px rgba(255,255,255,.20);}
+  100%{text-shadow:0 4px 14px rgba(0,0,0,.95),0 0 8px rgba(255,255,255,.18),0 0 14px rgba(255,255,255,.12);}
+}
+
+/* ===== SPIN button (with pulse) ===== */
+.spin-btn{
+  position:absolute;
+  bottom:22px;
+  left:50%;
+  transform:translateX(-50%);
+  background:#fff;
+  color:#111;
+  font-weight:900;
+  border:none;
+  border-radius:14px;
+  padding:14px 44px;
+  font-size:18px;
+  cursor:pointer;
+
+  box-shadow:0 10px 25px rgba(0,0,0,.35);
+  transition: transform .18s ease, box-shadow .25s ease;
+
+  animation: btnPulse 2.6s ease-in-out infinite;
+}
+
+@keyframes btnPulse{
+  0%   { box-shadow:0 10px 25px rgba(0,0,0,.35), 0 0 0 0 rgba(255,255,255,.35); }
+  50%  { box-shadow:0 12px 30px rgba(0,0,0,.38), 0 0 18px 6px rgba(255,255,255,.20); }
+  100% { box-shadow:0 10px 25px rgba(0,0,0,.35), 0 0 0 0 rgba(255,255,255,.35); }
+}
+
+.spin-btn:hover{
+  transform:translateX(-50%) scale(1.05);
+  animation:none;
+}
+
+/* ===== close button (fade-out close) ===== */
+.close-btn{
+  position:absolute;
+  top:10px;
+  right:10px;
+  width:36px;
+  height:36px;
+  border-radius:50%;
+  background:rgba(0,0,0,.6);
+  color:#fff;
+  border:none;
+  font-size:20px;
+  cursor:pointer;
+  transition: background .2s ease, transform .2s ease;
+}
+.close-btn:hover{
+  background:#000;
+  transform: scale(1.05);
+}
+
+/* fade-out animation when closing */
+.spin-box.closing{
+  animation: closeOut .25s ease forwards;
+}
+@keyframes closeOut{
+  to{ opacity:0; transform: scale(.98); }
+}
+
+@media(max-width:360px){
+  .spin-title{font-size:18px}
+}
+
+@media (prefers-reduced-motion: reduce){
+  .spin-title, .spin-btn{animation:none !important}
+}
+</style>
+
+</head>
+
+<body>
+
+<div class="spin-box" id="spinBox">
+
+  <img src="your-image.jpg" alt="Tattoo Of The Day">
+
+  <div class="spin-title">🔥 Tattoo Of The Day</div>
+
+  <button class="close-btn" onclick="closeWidget()">✕</button>
+
+  <!-- ✅ UPDATED LINK HERE -->
+  <button class="spin-btn" onclick="window.location.href='https://johnsimsek.github.io/Spin-wheel-/'">
+    SPIN
+  </button>
+
+</div>
+
+<script>
+function closeWidget(){
+  const box = document.getElementById('spinBox');
+  box.classList.add('closing');
+  setTimeout(()=>{ box.style.display='none'; }, 260);
+}
+</script>
+
+</body>
+</html>
