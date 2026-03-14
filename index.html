@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Tattoo Of The Day - Widget</title>
+
+  <style>
+    :root{
+      --home: "https://www.inkyvibestattoo.com";
+      --radius: 22px;
+      --shadow: 0 20px 60px rgba(0,0,0,.18), 0 8px 22px rgba(0,0,0,.08);
+    }
+
+    *{ box-sizing:border-box; }
+    html, body{ margin:0; padding:0; height:100%; }
+
+    /* ✅ White + soft shade (NOT grey) */
+    body{
+      background:#ffffff;
+      background-image:
+        radial-gradient(900px 420px at 50% -160px, rgba(0,0,0,.06), rgba(0,0,0,0) 60%),
+        radial-gradient(700px 360px at 50% 120%, rgba(0,0,0,.04), rgba(0,0,0,0) 60%);
+      font-family: Arial, sans-serif;
+      color:#111;
+      overflow:hidden; /* ✅ prevents long scrolling inside this embed */
+    }
+
+    /* ✅ Stable height: always fits the iframe viewport */
+    .stage{
+      height:100svh; /* modern mobile safe viewport */
+      min-height:100vh;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding: 18px 12px;
+    }
+
+    /* ===== CARD ===== */
+    .spin-box{
+      position:relative;
+      max-width:360px;
+      width:100%;
+      border-radius:var(--radius);
+      overflow:hidden;
+      box-shadow: var(--shadow);
+      background:#000;
+      transform: translateZ(0);
+    }
+
+    /* soft glow under card */
+    .spin-box::after{
+      content:"";
+      position:absolute;
+      left:50%;
+      bottom:-18px;
+      transform:translateX(-50%);
+      width:86%;
+      height:34px;
+      background:rgba(0,0,0,.14);
+      filter: blur(18px);
+      opacity:.22;
+      pointer-events:none;
+      z-index:-1;
+    }
+
+    .spin-box img{
+      width:100%;
+      display:block;
+    }
+
+    .spin-title{
+      position:absolute;
+      top:16px;
+      left:50%;
+      transform:translateX(-50%);
+      color:#fff;
+      font-weight:900;
+      font-size:20px;
+      white-space:nowrap;
+      text-align:center;
+      letter-spacing:.4px;
+
+      opacity:0;
+      animation: titleIn .55s ease forwards, glowPulse 2.8s ease-in-out infinite;
+
+      text-shadow:
+        0 4px 14px rgba(0,0,0,.95),
+        0 0 10px rgba(255,255,255,.25),
+        0 0 18px rgba(255,255,255,.18);
+    }
+
+    @keyframes titleIn{
+      from{opacity:0; transform:translateX(-50%) translateY(-6px) scale(.98);}
+      to  {opacity:1; transform:translateX(-50%) translateY(0) scale(1);}
+    }
+    @keyframes glowPulse{
+      0%{text-shadow:0 4px 14px rgba(0,0,0,.95),0 0 8px rgba(255,255,255,.18),0 0 14px rgba(255,255,255,.12);}
+      50%{text-shadow:0 4px 14px rgba(0,0,0,.95),0 0 16px rgba(255,255,255,.35),0 0 26px rgba(255,255,255,.20);}
+      100%{text-shadow:0 4px 14px rgba(0,0,0,.95),0 0 8px rgba(255,255,255,.18),0 0 14px rgba(255,255,255,.12);}
+    }
+
+    .spin-btn{
+      position:absolute;
+      bottom:22px;
+      left:50%;
+      transform:translateX(-50%);
+      background:#fff;
+      color:#111;
+      font-weight:900;
+      border:none;
+      border-radius:14px;
+      padding:14px 44px;
+      font-size:18px;
+      cursor:pointer;
+
+      box-shadow:0 10px 25px rgba(0,0,0,.35);
+      transition: transform .18s ease, box-shadow .25s ease;
+
+      animation: btnPulse 2.6s ease-in-out infinite;
+    }
+
+    @keyframes btnPulse{
+      0%   { box-shadow:0 10px 25px rgba(0,0,0,.35), 0 0 0 0 rgba(255,255,255,.35); }
+      50%  { box-shadow:0 12px 30px rgba(0,0,0,.38), 0 0 18px 6px rgba(255,255,255,.18); }
+      100% { box-shadow:0 10px 25px rgba(0,0,0,.35), 0 0 0 0 rgba(255,255,255,.35); }
+    }
+
+    .spin-btn:hover{
+      transform:translateX(-50%) scale(1.05);
+      animation:none;
+    }
+
+    .close-btn{
+      position:absolute;
+      top:10px;
+      right:10px;
+      width:36px;
+      height:36px;
+      border-radius:50%;
+      background:rgba(0,0,0,.6);
+      color:#fff;
+      border:none;
+      font-size:20px;
+      cursor:pointer;
+      transition: background .2s ease, transform .2s ease;
+    }
+    .close-btn:hover{
+      background:#000;
+      transform: scale(1.05);
+    }
+
+    @media(max-width:360px){
+      .spin-title{font-size:18px}
+    }
+
+    /* ===== MODAL (spin popup) ===== */
+    .modal-bg{
+      position:fixed;
+      inset:0;
+      background:rgba(0,0,0,.60);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      display:none;
+      align-items:center;
+      justify-content:center;
+      padding:
+        max(14px, env(safe-area-inset-top))
+        max(14px, env(safe-area-inset-right))
+        max(14px, env(safe-area-inset-bottom))
+        max(14px, env(safe-area-inset-left));
+      z-index:99999;
+    }
+    .modal-bg.show{ display:flex; }
+
+    .modal-card{
+      width:min(480px, 100%);
+      border-radius:20px;
+      overflow:hidden;
+      box-shadow: 0 30px 90px rgba(0,0,0,.55);
+      background:#000;
+      position:relative;
+    }
+
+    .modal-iframe{
+      width:100%;
+      height:min(82svh, 720px);
+      border:0;
+      display:block;
+      background:#000;
+    }
+
+    .modal-x{
+      position:absolute;
+      top:10px;
+      right:10px;
+      width:44px;
+      height:44px;
+      border-radius:999px;
+      background:rgba(0,0,0,.65);
+      border:1px solid rgba(255,255,255,.18);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-size:22px;
+      cursor:pointer;
+      color:#fff;
+      z-index:2;
+      box-shadow:0 10px 30px rgba(0,0,0,.6);
+    }
+    .modal-x:hover{ background:rgba(0,0,0,.85); }
+  </style>
+</head>
+
+<body>
+  <div class="stage">
+    <div class="spin-box" id="spinBox">
+      <!-- replace with your real image -->
+      <img src="your-image.jpg" alt="Tattoo Of The Day">
+
+      <div class="spin-title">🔥 Tattoo Of The Day</div>
+
+      <!-- ✅ X: go to main page -->
+      <button class="close-btn" type="button" id="closeCard">✕</button>
+
+      <!-- ✅ SPIN: open popup modal (no scrolling down) -->
+      <button class="spin-btn" type="button" id="openSpin">
+        SPIN
+      </button>
+    </div>
+  </div>
+
+  <!-- ✅ Modal that contains your big spin HTML -->
+  <div class="modal-bg" id="modalBg" role="dialog" aria-modal="true" aria-label="Tattoo Of The Day">
+    <div class="modal-card">
+      <!-- ✅ X: go to main page -->
+      <button class="modal-x" type="button" id="closeModal">✕</button>
+
+      <!-- Put your “big popup HTML” page URL here (recommended) -->
+      <!-- If you DON'T have it hosted, you can swap src="" to srcdoc="..." later -->
+      <iframe
+        class="modal-iframe"
+        id="spinFrame"
+        title="Tattoo Of The Day Popup"
+        loading="eager"
+        src="https://johnsimsek.github.io/Spin-wheel-/"
+        allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+      ></iframe>
+    </div>
+  </div>
+
+  <script>
+    const HOME_URL = "https://www.inkyvibestattoo.com";
+
+    function goHome(){
+      // Best effort from inside Google Sites iframe
+      try { window.top.location.assign(HOME_URL); return; } catch (e) {}
+      try { window.parent.location.assign(HOME_URL); return; } catch (e) {}
+      // Fallback: open new tab if navigation is blocked
+      window.open(HOME_URL, "_top");
+    }
+
+    const modalBg = document.getElementById("modalBg");
+    const openSpin = document.getElementById("openSpin");
+    const closeModal = document.getElementById("closeModal");
+    const closeCard = document.getElementById("closeCard");
+
+    openSpin.addEventListener("click", () => {
+      modalBg.classList.add("show");
+    });
+
+    closeModal.addEventListener("click", goHome);
+    closeCard.addEventListener("click", goHome);
+
+    // Click outside modal card: close modal only
+    modalBg.addEventListener("click", (e) => {
+      if (e.target === modalBg) modalBg.classList.remove("show");
+    });
+
+    // Esc closes modal only
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape") modalBg.classList.remove("show");
+    });
+  </script>
+</body>
+</html>
